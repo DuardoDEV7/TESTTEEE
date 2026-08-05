@@ -6,7 +6,7 @@ import os
 # 1. Configuração da página
 st.set_page_config(page_title="J.J Collection", page_icon="💎", layout="wide", initial_sidebar_state="expanded")
 
-# 2. CSS de Luxo (Agora com Responsividade para Celulares)
+# 2. CSS de Luxo (Responsividade, Proteção contra cortes e Setinha destacada)
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
@@ -21,33 +21,47 @@ h1, h2, h3 { color: #d4af37 !important; font-family: 'Cinzel', serif !important;
 [data-testid="stHeader"] {background-color: transparent;}
 [data-testid="stToolbar"] {right: 2rem; background-color: transparent;}
 
-/* Classes criadas para o título principal se adaptar ao celular */
+/* ========================================= */
+/* NOVO: Destaque para a setinha do menu     */
+/* ========================================= */
+[data-testid="collapsedControl"] {
+    color: #d4af37 !important;
+    background-color: rgba(10, 10, 10, 0.9) !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 5px !important;
+    margin-top: 10px;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+[data-testid="collapsedControl"] svg {
+    fill: #d4af37 !important;
+}
+[data-testid="collapsedControl"]:hover {
+    background-color: #d4af37 !important;
+    color: #000000 !important;
+}
+[data-testid="collapsedControl"]:hover svg {
+    fill: #000000 !important;
+}
+/* ========================================= */
+
+/* Classes inteligentes para não cortar no celular */
 .titulo-principal {
     font-family: 'Cinzel', serif; 
     color: #d4af37; 
-    font-size: 26px; 
+    font-size: clamp(16px, 4vw, 26px);
     letter-spacing: 4px; 
     line-height: 1.4;
 }
 .palavra-destaque {
     font-family: 'Great Vibes', cursive; 
-    font-size: 70px; 
+    font-size: clamp(40px, 12vw, 70px);
     color: #e8c678; 
     letter-spacing: 2px; 
     text-transform: lowercase; 
     margin-top: -10px; 
     display: inline-block;
-}
-
-/* Regra de Ouro: Se a tela for menor que 768px (Celulares), diminui a fonte */
-@media (max-width: 768px) {
-    .titulo-principal {
-        font-size: 18px; /* Título menor */
-        letter-spacing: 2px;
-    }
-    .palavra-destaque {
-        font-size: 45px; /* Fonte cursiva menor para não cortar */
-    }
+    padding: 5px 25px; 
 }
 </style>
 """
@@ -89,7 +103,6 @@ st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
 # 5. LÓGICA DO LINK SECRETO
-# Verifica se a URL tem ?admin=didicarreiras
 modo_admin = st.query_params.get("admin") == "didicarreiras"
 
 
@@ -192,12 +205,12 @@ else:
     else:
         df_filtrado = df_estoque
 
-    # Usando as classes CSS que criamos para a responsividade
+    # Usando as classes CSS para a responsividade e a tag translate="no"
     header_principal = """
     <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
         <div class="titulo-principal">
             OS <span style="font-weight: 700;">DETALHES</span> FAZEM TODA A <br>
-            <span class="palavra-destaque">diferença.</span>
+            <span class="palavra-destaque" translate="no">diferença.</span>
         </div>
     </div>
     """
