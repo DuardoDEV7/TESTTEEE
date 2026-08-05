@@ -6,7 +6,7 @@ import os
 # 1. Configuração da página
 st.set_page_config(page_title="J.J Collection", page_icon="💎", layout="wide", initial_sidebar_state="expanded")
 
-# 2. CSS de Luxo 
+# 2. CSS de Luxo (Agora com Responsividade para Celulares)
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
@@ -20,6 +20,35 @@ h1, h2, h3 { color: #d4af37 !important; font-family: 'Cinzel', serif !important;
 .stLinkButton a:hover { background-color: #d4af37; color: #000000; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);}
 [data-testid="stHeader"] {background-color: transparent;}
 [data-testid="stToolbar"] {right: 2rem; background-color: transparent;}
+
+/* Classes criadas para o título principal se adaptar ao celular */
+.titulo-principal {
+    font-family: 'Cinzel', serif; 
+    color: #d4af37; 
+    font-size: 26px; 
+    letter-spacing: 4px; 
+    line-height: 1.4;
+}
+.palavra-destaque {
+    font-family: 'Great Vibes', cursive; 
+    font-size: 70px; 
+    color: #e8c678; 
+    letter-spacing: 2px; 
+    text-transform: lowercase; 
+    margin-top: -10px; 
+    display: inline-block;
+}
+
+/* Regra de Ouro: Se a tela for menor que 768px (Celulares), diminui a fonte */
+@media (max-width: 768px) {
+    .titulo-principal {
+        font-size: 18px; /* Título menor */
+        letter-spacing: 2px;
+    }
+    .palavra-destaque {
+        font-size: 45px; /* Fonte cursiva menor para não cortar */
+    }
+}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -113,12 +142,10 @@ if modo_admin:
             
             st.markdown("---")
             
-            # ---> NOVA FUNÇÃO DE EDITAR PREÇO E ESTOQUE <---
             st.subheader("✏️ Editar Preço ou Estoque")
             id_para_editar = st.number_input("Digite o ID do produto para editar:", min_value=1, step=1, key="edit_id")
             
             if id_para_editar in df_estoque['id'].values:
-                # Puxa os dados atuais do produto para mostrar na tela
                 produto_atual = df_estoque[df_estoque['id'] == id_para_editar].iloc[0]
                 
                 with st.form("form_edicao"):
@@ -165,18 +192,19 @@ else:
     else:
         df_filtrado = df_estoque
 
+    # Usando as classes CSS que criamos para a responsividade
     header_principal = """
     <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
-    <div style="font-family: 'Cinzel', serif; color: #d4af37; font-size: 26px; letter-spacing: 4px; line-height: 1.4;">
-    OS <span style="font-weight: 700;">DETALHES</span> FAZEM TODA A <br>
-    <span style="font-family: 'Great Vibes', cursive; font-size: 70px; color: #e8c678; letter-spacing: 2px; text-transform: lowercase; margin-top: -10px; display: inline-block;">diferença.</span>
-    </div>
+        <div class="titulo-principal">
+            OS <span style="font-weight: 700;">DETALHES</span> FAZEM TODA A <br>
+            <span class="palavra-destaque">diferença.</span>
+        </div>
     </div>
     """
     st.markdown(header_principal, unsafe_allow_html=True)
     st.markdown(f"<h3 style='text-align: center; margin-bottom: 30px; letter-spacing: 2px;'>{escolha.upper()}</h3>", unsafe_allow_html=True)
 
-    NUMERO_WHATSAPP = "5511933088393"
+    NUMERO_WHATSAPP = "5511999999999"
 
     colunas = st.columns(3)
     for i, (index, row) in enumerate(df_filtrado.iterrows()):
