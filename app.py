@@ -2,15 +2,27 @@ import streamlit as st
 import pandas as pd
 import urllib.parse
 import os
+import streamlit.components.v1 as components
 
 # 1. Configuração da página
 st.set_page_config(page_title="J.J Collection", page_icon="💎", layout="wide", initial_sidebar_state="expanded")
 
-# 2. CSS de Luxo e Bloqueio Geral de Tradução
-custom_css = """
-<!-- Trava para o Google Tradutor não bagunçar o site -->
-<meta name="google" content="notranslate">
+# ==========================================
+# A MÁGICA CONTRA O GOOGLE TRADUTOR
+# Muda a raiz do site para Português (pt-BR) e desativa a tradução
+# ==========================================
+components.html(
+    """
+    <script>
+        window.parent.document.documentElement.lang = 'pt-BR';
+        window.parent.document.documentElement.setAttribute('translate', 'no');
+    </script>
+    """,
+    width=0, height=0
+)
 
+# 2. CSS de Luxo 
+custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
 body { background-color: #050505; color: #e0e0e0; font-family: 'Montserrat', sans-serif; }
