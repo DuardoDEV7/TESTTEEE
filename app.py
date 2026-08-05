@@ -95,8 +95,9 @@ if menu_selecionado == "💎 Vitrine da Loja":
 
     # Grid de Produtos
     colunas = st.columns(3)
-    for index, row in df_filtrado.iterrows():
-        with colunas[index % 3]:
+    # Usamos o 'enumerate' para criar um contador (i) que sempre começa do zero
+    for i, (index, row) in enumerate(df_filtrado.iterrows()):
+        with colunas[i % 3]:
             st.markdown("<div style='padding: 10px;'>", unsafe_allow_html=True)
             try:
                 st.image(row["imagem"], use_container_width=True)
