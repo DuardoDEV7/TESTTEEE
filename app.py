@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import urllib.parse
 
 # 1. Configuração da página
 st.set_page_config(
@@ -22,13 +23,24 @@ h1, h2, h3 { color: #d4af37 !important; font-family: 'Cinzel', serif !important;
 .markdown-text-container p, .stMarkdown p { font-family: 'Montserrat', sans-serif !important; color: #cccccc !important; font-size: 14px; }
 .stButton button { background-color: transparent; color: #d4af37; border: 1px solid #d4af37; border-radius: 0px; font-family: 'Cinzel', serif; letter-spacing: 1px; width: 100%; transition: all 0.4s ease; }
 .stButton button:hover { background-color: #d4af37; color: #000000; border: 1px solid #d4af37; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); }
+
+/* Estilo para o link do WhatsApp se comportar como o botão original */
+.stLinkButton a {
+    display: block; text-align: center; background-color: transparent; color: #d4af37; 
+    border: 1px solid #d4af37; border-radius: 0px; font-family: 'Cinzel', serif; 
+    letter-spacing: 1px; width: 100%; padding: 0.5rem 1rem; text-decoration: none; transition: all 0.4s ease;
+}
+.stLinkButton a:hover {
+    background-color: #d4af37; color: #000000; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
 [data-testid="stHeader"] {background-color: transparent;}
 [data-testid="stToolbar"] {right: 2rem; background-color: transparent;}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# 3. Logo Refinada na Barra Lateral (Sem espaços no início das linhas)
+# 3. Logo Refinada na Barra Lateral
 logo_html = """
 <div style="text-align: center; margin-bottom: 20px; margin-top: -20px;">
 <div style="display: inline-block; border-radius: 50%; width: 160px; height: 160px; background: radial-gradient(circle, #1a1a1a 0%, #000000 100%); border: 2px solid rgba(212, 175, 55, 0.8); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.1); display: flex; justify-content: center; align-items: center; flex-direction: column; color: #d4af37; font-family: 'Cinzel', serif;">
@@ -45,14 +57,45 @@ J.J COLLECTION <br> <span style="font-size: 11px; color: #888888; letter-spacing
 st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 
 
-# 4. Banco de Dados Temporário
+# 4. Banco de Dados da J.J Collection (Apenas as peças disponíveis extraídas do Instagram)
+# Troque as URLs pelas suas fotos locais, por exemplo: "imagem": "pulseira_nossa_senhora.jpg"
 dados = [
-    {"id": 1, "categoria": "Brincos", "nome": "Brinco Gota Dourado", "descricao": "Banhado a ouro 18k, design minimalista e atemporal.", "estoque": 5, "preco": "R$ 45,00", "imagem": "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80"},
-    {"id": 2, "categoria": "Brincos", "nome": "Argola Prata 925", "descricao": "Argola clássica em prata de lei, tamanho médio.", "estoque": 12, "preco": "R$ 60,00", "imagem": "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=400&q=80"},
-    {"id": 3, "categoria": "Anéis", "nome": "Anel Solitário", "descricao": "Cravejado com zircônia central de alto brilho.", "estoque": 3, "preco": "R$ 80,00", "imagem": "https://images.unsplash.com/photo-1605100804763-247f679e54d4?w=400&q=80"},
-    {"id": 4, "categoria": "Anéis", "nome": "Anel Aparador", "descricao": "Meia aliança sofisticada com microzircônias.", "estoque": 8, "preco": "R$ 55,00", "imagem": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&q=80"},
-    {"id": 5, "categoria": "Colares", "nome": "Ponto de Luz", "descricao": "Gargantilha delicada que transmite elegância.", "estoque": 15, "preco": "R$ 70,00", "imagem": "https://images.unsplash.com/photo-1599643478524-fb524b025359?w=400&q=80"},
-    {"id": 6, "categoria": "Colares", "nome": "Riviera Luxo", "descricao": "Corrente estilo riviera impecável com fecho gaveta.", "estoque": 2, "preco": "R$ 120,00", "imagem": "https://images.unsplash.com/photo-1611652022419-a9419f74343d?w=400&q=80"}
+    {
+        "id": 1, 
+        "categoria": "Pulseiras", 
+        "nome": "Pulseira Nossa Senhora", 
+        "descricao": "Banhada a ouro 18k com pingente de Nossa Senhora e cruz. Carrega proteção, delicadeza e elegância.", 
+        "estoque": 1, 
+        "preco": "R$ 70,00", 
+        "imagem": "https://via.placeholder.com/400x400/1a1a1a/d4af37?text=Foto+Nossa+Senhora"
+    },
+    {
+        "id": 2, 
+        "categoria": "Pulseiras", 
+        "nome": "Pulseira Zircônias Brilho", 
+        "descricao": "Semijoia banhada a ouro 18K. Detalhes em zircônias de alto brilho, acabamento impecável e design moderno.", 
+        "estoque": 1, 
+        "preco": "R$ 80,00", 
+        "imagem": "https://via.placeholder.com/400x400/1a1a1a/d4af37?text=Foto+Zirconias+Ouro"
+    },
+    {
+        "id": 3, 
+        "categoria": "Pulseiras", 
+        "nome": "Pulseira Flor Ródio", 
+        "descricao": "Semijoia com banho de ródio. Flor delicada com acabamento impecável e zircônias de alto brilho.", 
+        "estoque": 1, 
+        "preco": "R$ 80,00", 
+        "imagem": "https://via.placeholder.com/400x400/1a1a1a/d4af37?text=Foto+Flor+Rodio"
+    },
+    {
+        "id": 4, 
+        "categoria": "Pulseiras", 
+        "nome": "Pulseira Cruzada Ródio", 
+        "descricao": "Semijoia com banho de ródio e acabamento premium. Proteção contra oxidação e brilho espelhado.", 
+        "estoque": 1, 
+        "preco": "R$ 45,00", 
+        "imagem": "https://via.placeholder.com/400x400/1a1a1a/d4af37?text=Foto+Cruzada+Rodio"
+    }
 ]
 df_estoque = pd.DataFrame(dados)
 
@@ -70,7 +113,7 @@ else:
     df_filtrado = df_estoque
 
 
-# 7. Cabeçalho Principal (Ajustado sem espaços no começo das linhas)
+# 7. Cabeçalho Principal
 header_principal = """
 <div style="text-align: center; margin-bottom: 50px; margin-top: 10px;">
 <hr style="border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(212, 175, 55, 0.7), rgba(0,0,0,0)); margin-bottom: 30px;">
@@ -86,7 +129,10 @@ st.markdown(header_principal, unsafe_allow_html=True)
 st.markdown(f"<h3 style='text-align: center; margin-bottom: 30px; font-size: 20px; letter-spacing: 2px;'>{escolha.upper()}</h3>", unsafe_allow_html=True)
 
 
-# 8. Exibição em Grade (Grid)
+# 8. Número do WhatsApp da Loja (Substitua pelo número real da loja)
+NUMERO_WHATSAPP = "5511933088393"
+
+# 9. Exibição em Grade (Grid)
 colunas = st.columns(3)
 
 for index, row in df_filtrado.iterrows():
@@ -97,7 +143,6 @@ for index, row in df_filtrado.iterrows():
         st.markdown(f"<h3 style='font-size: 18px; margin-top: 15px; margin-bottom: 5px; text-align: center;'>{row['nome']}</h3>", unsafe_allow_html=True)
         st.markdown(f"<p style='text-align: center; font-style: italic; font-size: 13px;'>{row['descricao']}</p>", unsafe_allow_html=True)
         
-        # Ajustado sem espaços no começo também
         info_produto = f"""
 <div style='text-align: center; font-family: "Montserrat", sans-serif; margin-bottom: 15px;'>
 <span style='color: #d4af37; font-size: 18px; font-weight: 500;'>{row['preco']}</span><br>
@@ -106,8 +151,12 @@ for index, row in df_filtrado.iterrows():
 """
         st.markdown(info_produto, unsafe_allow_html=True)
         
-        if st.button("Ver Detalhes", key=f"btn_{row['id']}"):
-            st.success(f"Detalhes exclusivos de {row['nome']} apareceriam aqui.")
+        # Botão Inteligente do WhatsApp
+        texto_mensagem = f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?"
+        texto_url_segura = urllib.parse.quote(texto_mensagem)
+        link_zap = f"https://wa.me/{NUMERO_WHATSAPP}?text={texto_url_segura}"
+        
+        st.link_button("Comprar pelo WhatsApp 📱", link_zap, use_container_width=True)
             
         st.markdown("</div>", unsafe_allow_html=True)
         st.markdown("<hr style='border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(212, 175, 55, 0.15), rgba(0,0,0,0));'>", unsafe_allow_html=True)
