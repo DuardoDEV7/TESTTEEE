@@ -249,3 +249,4 @@ else:
             texto = urllib.parse.quote(f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?")
             st.link_button("Comprar pelo WhatsApp 📱", f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}", use_container_width=True)
             st.markdown("</div><hr style='border-top: 1px solid rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
+            
