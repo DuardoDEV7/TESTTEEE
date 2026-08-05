@@ -6,8 +6,11 @@ import os
 # 1. Configuração da página
 st.set_page_config(page_title="J.J Collection", page_icon="💎", layout="wide", initial_sidebar_state="expanded")
 
-# 2. CSS de Luxo (Responsividade, Proteção contra cortes e Setinha destacada)
+# 2. CSS de Luxo e Bloqueio Geral de Tradução
 custom_css = """
+<!-- Trava para o Google Tradutor não bagunçar o site -->
+<meta name="google" content="notranslate">
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
 body { background-color: #050505; color: #e0e0e0; font-family: 'Montserrat', sans-serif; }
@@ -22,26 +25,28 @@ h1, h2, h3 { color: #d4af37 !important; font-family: 'Cinzel', serif !important;
 [data-testid="stToolbar"] {right: 2rem; background-color: transparent;}
 
 /* ========================================= */
-/* NOVO: Destaque para a setinha do menu     */
+/* SETINHA E MENU VISÍVEIS (PC E CELULAR)    */
 /* ========================================= */
 [data-testid="collapsedControl"] {
-    color: #d4af37 !important;
-    background-color: rgba(10, 10, 10, 0.9) !important;
+    background-color: #1a1a1a !important;
     border: 1px solid #d4af37 !important;
     border-radius: 5px !important;
-    margin-top: 10px;
-    margin-left: 10px;
-    transition: all 0.3s ease;
+    margin: 10px !important;
 }
 [data-testid="collapsedControl"] svg {
     fill: #d4af37 !important;
+    color: #d4af37 !important;
 }
-[data-testid="collapsedControl"]:hover {
-    background-color: #d4af37 !important;
-    color: #000000 !important;
+button[kind="header"] {
+    background-color: #1a1a1a !important;
+    border: 1px solid #d4af37 !important;
+    border-radius: 5px !important;
+    margin: 5px !important;
+    padding: 2px !important;
 }
-[data-testid="collapsedControl"]:hover svg {
-    fill: #000000 !important;
+button[kind="header"] svg {
+    fill: #d4af37 !important;
+    color: #d4af37 !important;
 }
 /* ========================================= */
 
@@ -104,7 +109,6 @@ st.sidebar.markdown("---")
 
 # 5. LÓGICA DO LINK SECRETO
 modo_admin = st.query_params.get("admin") == "didicarreiras"
-
 
 # ==========================================
 # TELA 2: O PAINEL ADMINISTRATIVO (Para Donos)
@@ -191,7 +195,6 @@ if modo_admin:
     elif senha != "":
         st.error("Senha Incorreta.")
 
-
 # ==========================================
 # TELA 1: A VITRINE (Para os Clientes)
 # ==========================================
@@ -205,12 +208,11 @@ else:
     else:
         df_filtrado = df_estoque
 
-    # Usando as classes CSS para a responsividade e a tag translate="no"
     header_principal = """
     <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
         <div class="titulo-principal">
             OS <span style="font-weight: 700;">DETALHES</span> FAZEM TODA A <br>
-            <span class="palavra-destaque" translate="no">diferença.</span>
+            <span class="palavra-destaque">diferença.</span>
         </div>
     </div>
     """
