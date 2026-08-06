@@ -21,6 +21,7 @@ components.html(
     """,
     width=0, height=0
 )
+
 # 2. CSS de Luxo 
 custom_css = """
 <style>
@@ -38,16 +39,11 @@ custom_css = """
         display: none !important;
     }
     
-    /* 3. Remove a sua foto e o balãozinho do canto inferior direito (Força Bruta) */
-    div[class*="viewerBadge"], 
-    div[class*="stAppViewCreator"],
-    div[class*="stAppViewBadge"],
-    [data-testid*="stAppViewCreator"],
-    [data-testid*="viewerBadge"],
-    #viewerBadge_container {
+    /* 3. Remove a sua foto e o balãozinho do canto inferior direito */
+    .viewerBadge_container, 
+    [data-testid="stAppViewCreator"],
+    [data-testid="viewerBadge"] {
         display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
     }
     /* ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
