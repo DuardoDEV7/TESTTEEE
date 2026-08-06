@@ -9,14 +9,22 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="J.J Collection", page_icon="💎", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================
-# A MÁGICA CONTRA O GOOGLE TRADUTOR
-# Muda a raiz do site para Português (pt-BR) e desativa a tradução
+# A MÁGICA CONTRA O GOOGLE TRADUTOR + REMOÇÃO DE LOGOS (CAVALO DE TROIA)
+# Muda a raiz do site para Português (pt-BR) e injeta CSS fora do iframe
 # ==========================================
 components.html(
     """
     <script>
+        // 1. Bloqueia o Google Tradutor
         window.parent.document.documentElement.lang = 'pt-BR';
         window.parent.document.documentElement.setAttribute('translate', 'no');
+        
+        // 2. Destrói o balãozinho e a foto lá no servidor pai
+        var css = 'div[class*="viewerBadge"], div[class*="stAppView"], div[class*="manageApp"], #viewerBadge_container { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }';
+        var style = window.parent.document.createElement('style');
+        style.type = 'text/css';
+        style.appendChild(window.parent.document.createTextNode(css));
+        window.parent.document.head.appendChild(style);
     </script>
     """,
     width=0, height=0
