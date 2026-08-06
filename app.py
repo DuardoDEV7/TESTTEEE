@@ -241,6 +241,34 @@ else:
     else:
         df_filtrado = df_estoque
 
+    # ==========================================
+    # CSS EXCLUSIVO PARA FORÇAR 2 COLUNAS NO CELULAR
+    # ==========================================
+    css_vitrine_mobile = """
+    <style>
+    @media (max-width: 768px) {
+        /* Bloqueia o empilhamento automático do Streamlit */
+        [data-testid="stHorizontalBlock"] {
+            flex-direction: row !important;
+            gap: 10px !important;
+        }
+        /* Define que cada produto ocupa exatamente 50% da tela */
+        [data-testid="column"] {
+            width: 48% !important;
+            flex: 1 1 48% !important;
+            min-width: 48% !important;
+            padding: 0px !important;
+        }
+        /* Ajuste fino nas fontes para caber tudo em 50% da tela */
+        .vitrine-nome { font-size: 13px !important; margin-top: 10px !important; }
+        .vitrine-desc { font-size: 10px !important; line-height: 1.2 !important; }
+        .vitrine-preco { font-size: 14px !important; }
+        .stLinkButton a { font-size: 11px !important; padding: 8px 4px !important; letter-spacing: 0px !important; }
+    }
+    </style>
+    """
+    st.markdown(css_vitrine_mobile, unsafe_allow_html=True)
+
     header_principal = """
     <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
         <div class="titulo-principal">
@@ -254,19 +282,22 @@ else:
 
     NUMERO_WHATSAPP = "5511976984671"
 
-    colunas = st.columns(3)
+    # Alterado para 2 colunas para manter o alinhamento par no PC e no Celular
+    colunas = st.columns(2) 
+    
     for i, (index, row) in enumerate(df_filtrado.iterrows()):
-        with colunas[i % 3]:
-            st.markdown("<div style='padding: 10px;'>", unsafe_allow_html=True)
+        with colunas[i % 2]:
+            st.markdown("<div style='padding: 5px;'>", unsafe_allow_html=True)
             try:
                 st.image(row["imagem"], use_container_width=True)
             except:
                 st.error("Foto não encontrada.")
 
-            st.markdown(f"<h3 style='font-size: 18px; margin-top: 15px; text-align: center;'>{row['nome']}</h3>", unsafe_allow_html=True)
-            st.markdown(f"<p style='text-align: center; font-style: italic; font-size: 13px;'>{row['descricao']}</p>", unsafe_allow_html=True)
-            st.markdown(f"<div style='text-align: center;'><span style='color: #d4af37; font-size: 18px; font-weight: 500;'>{row['preco']}</span><br><span style='color: #888; font-size: 12px;'>Estoque: {row['estoque']} un.</span></div><br>", unsafe_allow_html=True)
+            # Classes adicionadas (vitrine-nome, vitrine-desc, etc) para o CSS conectar e ajustar os tamanhos
+            st.markdown(f"<h3 class='vitrine-nome' style='font-size: 18px; margin-top: 15px; text-align: center;'>{row['nome']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<p class='vitrine-desc' style='text-align: center; font-style: italic; font-size: 13px;'>{row['descricao']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center;'><span class='vitrine-preco' style='color: #d4af37; font-size: 18px; font-weight: 500;'>{row['preco']}</span><br><span style='color: #888; font-size: 12px;'>Estoque: {row['estoque']} un.</span></div><br>", unsafe_allow_html=True)
             
             texto = urllib.parse.quote(f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?")
-            st.link_button("Comprar pelo WhatsApp 📱", f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}", use_container_width=True)
+            st.link_button("Comprar 📱", f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}", use_container_width=True)
             st.markdown("</div><hr style='border-top: 1px solid rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
