@@ -163,7 +163,7 @@ if modo_admin:
     senha = st.text_input("Digite a senha de acesso:", type="password")
     
     # ATENÇÃO: AQUI ESTÁ USANDO O ST.SECRETS. GARANTA QUE A SENHA ESTÁ NO PAINEL DO STREAMLIT!
-    if senha == st.secrets["senha_admin"]: 
+    if senha == st.secrets["jj2026"]: 
         st.success("Acesso Liberado!")
         st.markdown("---")
         
