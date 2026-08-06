@@ -25,6 +25,27 @@ components.html(
 # 2. CSS de Luxo 
 custom_css = """
 <style>
+/* ========================================= */
+    /* REMOVER MARCAS DO STREAMLIT E GITHUB      */
+    /* ========================================= */
+    
+    /* 1. Remove o menu superior direito (Fork, GitHub, 3 pontinhos) */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+    
+    /* 2. Remove o rodapé padrão do site */
+    footer {
+        display: none !important;
+    }
+    
+    /* 3. Remove a sua foto e o balãozinho do canto inferior direito */
+    .viewerBadge_container, 
+    [data-testid="stAppViewCreator"],
+    [data-testid="viewerBadge"] {
+        display: none !important;
+    }
+    /* ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap');
 body { background-color: #050505; color: #e0e0e0; font-family: 'Montserrat', sans-serif; }
 .stApp { background-color: #050505; }
