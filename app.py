@@ -120,7 +120,7 @@ st.sidebar.markdown(logo_html, unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
 # 5. LÓGICA DO LINK SECRETO
-modo_admin = st.query_params.get("admin") == "didicarreiras"
+modo_admin = st.query_params.get("admin") == "dududev.confg"
 
 # ==========================================
 # TELA 2: O PAINEL ADMINISTRATIVO (Para Donos)
