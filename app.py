@@ -84,16 +84,22 @@ button[kind="header"] svg {
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# 3. Lógica do Banco de Dados (CSV)
+# ==========================================
+# GESTÃO DE PASTAS E ARQUIVOS
+# ==========================================
 ARQUIVO_DADOS = "estoque.csv"
+PASTA_MIDIA = "midia_pecas"
+
+# Cria a pasta de fotos se ela não existir
+os.makedirs(PASTA_MIDIA, exist_ok=True)
 
 def inicializar_banco():
     if not os.path.exists(ARQUIVO_DADOS):
         dados_iniciais = [
-            {"id": 1, "categoria": "Pulseiras", "nome": "Pulseira Nossa Senhora", "descricao": "Banhada a ouro 18k com pingente e cruz.", "estoque": 1, "preco": "R$ 70,00", "imagem": "pulseira1.jpg"},
-            {"id": 2, "categoria": "Pulseiras", "nome": "Pulseira Zircônias Brilho", "descricao": "Detalhes em zircônias de alto brilho, acabamento impecável.", "estoque": 1, "preco": "R$ 80,00", "imagem": "pulseira2.jpg"},
-            {"id": 3, "categoria": "Pulseiras", "nome": "Pulseira Flor Ródio", "descricao": "Flor delicada com acabamento impecável e zircônias.", "estoque": 1, "preco": "R$ 80,00", "imagem": "pulseira3.jpg"},
-            {"id": 4, "categoria": "Pulseiras", "nome": "Pulseira Cruzada Ródio", "descricao": "Proteção contra oxidação e brilho espelhado.", "estoque": 1, "preco": "R$ 45,00", "imagem": "pulseira4.jpg"}
+            {"id": 1, "categoria": "Pulseiras", "nome": "Pulseira Nossa Senhora", "descricao": "Banhada a ouro 18k com pingente e cruz.", "estoque": 1, "preco": "R$ 70,00", "imagem": f"{PASTA_MIDIA}/pulseira1.jpg"},
+            {"id": 2, "categoria": "Pulseiras", "nome": "Pulseira Zircônias Brilho", "descricao": "Detalhes em zircônias de alto brilho, acabamento impecável.", "estoque": 1, "preco": "R$ 80,00", "imagem": f"{PASTA_MIDIA}/pulseira2.jpg"},
+            {"id": 3, "categoria": "Pulseiras", "nome": "Pulseira Flor Ródio", "descricao": "Flor delicada com acabamento impecável e zircônias.", "estoque": 1, "preco": "R$ 80,00", "imagem": f"{PASTA_MIDIA}/pulseira3.jpg"},
+            {"id": 4, "categoria": "Pulseiras", "nome": "Pulseira Cruzada Ródio", "descricao": "Proteção contra oxidação e brilho espelhado.", "estoque": 1, "preco": "R$ 45,00", "imagem": f"{PASTA_MIDIA}/pulseira4.jpg"}
         ]
         df = pd.DataFrame(dados_iniciais)
         df.to_csv(ARQUIVO_DADOS, index=False)
@@ -131,7 +137,8 @@ if modo_admin:
     
     senha = st.text_input("Digite a senha de acesso:", type="password")
     
-    if senha == "jj2026": 
+    # ATENÇÃO: AQUI ESTÁ USANDO O ST.SECRETS. GARANTA QUE A SENHA ESTÁ NO PAINEL DO STREAMLIT!
+    if senha == st.secrets["senha_admin"]: 
         st.success("Acesso Liberado!")
         st.markdown("---")
         
@@ -148,19 +155,22 @@ if modo_admin:
             
             if st.button("Salvar Produto no Estoque"):
                 if novo_nome and novo_preco and foto_upload:
+                    # Salva a imagem dentro da nova pasta
                     nome_arquivo_foto = foto_upload.name
-                    with open(nome_arquivo_foto, "wb") as f:
+                    caminho_salvar = os.path.join(PASTA_MIDIA, nome_arquivo_foto)
+                    
+                    with open(caminho_salvar, "wb") as f:
                         f.write(foto_upload.getbuffer())
                     
                     novo_id = df_estoque['id'].max() + 1 if not df_estoque.empty else 1
                     novo_produto = pd.DataFrame([{
                         "id": novo_id, "categoria": nova_categoria, "nome": novo_nome,
                         "descricao": nova_descricao, "estoque": novo_estoque, "preco": novo_preco,
-                        "imagem": nome_arquivo_foto 
+                        "imagem": caminho_salvar # Guarda o caminho da pasta no CSV
                     }])
                     df_atualizado = pd.concat([df_estoque, novo_produto], ignore_index=True)
                     salvar_dados(df_atualizado)
-                    st.success(f"{novo_nome} adicionado com sucesso!")
+                    st.success(f"{novo_nome} adicionado com sucesso na pasta {PASTA_MIDIA}!")
                     st.rerun()
                 else:
                     st.error("Por favor, preencha o Nome, Preço e envie uma Foto.")
@@ -198,9 +208,20 @@ if modo_admin:
             
             if st.button("Excluir Produto"):
                 if id_para_excluir in df_estoque['id'].values:
+                    # Descobre o caminho da imagem antes de apagar do banco
+                    caminho_imagem = df_estoque[df_estoque['id'] == id_para_excluir]['imagem'].iloc[0]
+                    
+                    # 1. Apaga do Banco de Dados (CSV)
                     df_estoque = df_estoque[df_estoque['id'] != id_para_excluir]
                     salvar_dados(df_estoque) 
-                    st.success("Produto excluído com sucesso!")
+                    
+                    # 2. Apaga o arquivo físico da pasta (se ele existir)
+                    if pd.notna(caminho_imagem) and os.path.exists(caminho_imagem):
+                        os.remove(caminho_imagem)
+                        st.success("Produto e foto excluídos com sucesso do servidor!")
+                    else:
+                        st.success("Produto excluído! (Nenhuma foto física encontrada).")
+                        
                     st.rerun() 
                 else:
                     st.error("ID não encontrado.")
@@ -249,4 +270,3 @@ else:
             texto = urllib.parse.quote(f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?")
             st.link_button("Comprar pelo WhatsApp 📱", f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}", use_container_width=True)
             st.markdown("</div><hr style='border-top: 1px solid rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
-            
