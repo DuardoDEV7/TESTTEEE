@@ -21,7 +21,6 @@ components.html(
     """,
     width=0, height=0
 )
-
 # 2. CSS de Luxo 
 custom_css = """
 <style>
