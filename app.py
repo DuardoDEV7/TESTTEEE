@@ -242,6 +242,34 @@ else:
     else:
         df_filtrado = df_estoque
 
+    # ==========================================
+    # CSS EXCLUSIVO PARA FORÇAR 2 COLUNAS NO CELULAR
+    # ==========================================
+    css_vitrine_mobile = """
+    <style>
+    @media (max-width: 768px) {
+        /* Bloqueia o empilhamento automático do Streamlit */
+        [data-testid="stHorizontalBlock"] {
+            flex-direction: row !important;
+            gap: 10px !important;
+        }
+        /* Define que cada produto ocupa exatamente 50% da tela */
+        [data-testid="column"] {
+            width: 48% !important;
+            flex: 1 1 48% !important;
+            min-width: 48% !important;
+            padding: 0px !important;
+        }
+        /* Ajuste fino nas fontes para caber tudo em 50% da tela */
+        .vitrine-nome { font-size: 13px !important; margin-top: 10px !important; }
+        .vitrine-desc { font-size: 10px !important; line-height: 1.2 !important; }
+        .vitrine-preco { font-size: 14px !important; }
+        .stLinkButton a { font-size: 11px !important; padding: 8px 4px !important; letter-spacing: 0px !important; }
+    }
+    </style>
+    """
+    st.markdown(css_vitrine_mobile, unsafe_allow_html=True)
+
     header_principal = """
     <div style="text-align: center; margin-bottom: 40px; margin-top: 10px;">
         <div class="titulo-principal">
@@ -255,119 +283,22 @@ else:
 
     NUMERO_WHATSAPP = "5511976984671"
 
-    # Função para ler a foto da pasta e injetar no HTML da vitrine
-    def get_image_base64(caminho):
-        try:
-            with open(caminho, "rb") as img_file:
-                return base64.b64encode(img_file.read()).decode()
-        except:
-            return ""
-
-    # O Grid CSS Definitivo (Ignora o bloqueio do Streamlit)
-    css_grid = """
-    <style>
-    .grid-vitrine {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 produtos por linha no PC */
-        gap: 15px;
-        padding: 5px;
-    }
-    @media (max-width: 768px) {
-        .grid-vitrine {
-            grid-template-columns: repeat(2, 1fr); /* 2 produtos cravados no Celular */
-            gap: 10px;
-            padding: 0px;
-        }
-    }
-    .card-produto {
-        background-color: #0a0a0a;
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        padding: 10px;
-        text-align: center;
-        border-radius: 5px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Alinha os botões perfeitamente embaixo */
-    }
-    .card-produto img {
-        width: 100%;
-        border-radius: 5px;
-        aspect-ratio: 1 / 1; 
-        object-fit: cover;
-        margin-bottom: 10px;
-    }
-    .card-title {
-        font-family: 'Cinzel', serif;
-        color: #d4af37;
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .card-desc {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 10px;
-        color: #ccc;
-        font-style: italic;
-        margin-bottom: 15px;
-        flex-grow: 1; 
-    }
-    .card-price {
-        color: #d4af37;
-        font-size: 16px;
-        font-weight: bold;
-    }
-    .card-stock {
-        font-size: 10px;
-        color: #888;
-        margin-bottom: 10px;
-    }
-    .btn-comprar {
-        display: block;
-        background-color: transparent;
-        color: #d4af37;
-        border: 1px solid #d4af37;
-        text-decoration: none;
-        padding: 8px;
-        font-family: 'Cinzel', serif;
-        font-size: 12px;
-        transition: 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    .btn-comprar:hover {
-        background-color: #d4af37;
-        color: #000;
-    }
-    </style>
-    """
-
-    # Gerando as caixas de HTML da Vitrine
-    html_vitrine = f"{css_grid}<div class='grid-vitrine'>"
-
-    for i, (index, row) in enumerate(df_filtrado.iterrows()):
-        img_b64 = get_image_base64(row['imagem'])
-        if img_b64:
-            img_src = f"data:image/jpeg;base64,{img_b64}"
-        else:
-            img_src = "https://via.placeholder.com/300?text=Sem+Foto"
-        
-        texto = urllib.parse.quote(f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?")
-        link_wpp = f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}"
-        
-        html_vitrine += f"""
-        <div class="card-produto">
-            <img src="{img_src}" alt="{row['nome']}">
-            <div class="card-title">{row['nome']}</div>
-            <div class="card-desc">{row['descricao']}</div>
-            <div>
-                <div class="card-price">{row['preco']}</div>
-                <div class="card-stock">Estoque: {row['estoque']} un.</div>
-            </div>
-            <a href="{link_wpp}" class="btn-comprar" target="_blank">Comprar 📱</a>
-        </div>
-        """
-
-    html_vitrine += "</div>"
+    # Alterado para 2 colunas para manter o alinhamento par no PC e no Celular
+    colunas = st.columns(2) 
     
-    # Renderiza todo o site de uma vez só!
-    st.markdown(html_vitrine, unsafe_allow_html=True)
+    for i, (index, row) in enumerate(df_filtrado.iterrows()):
+        with colunas[i % 2]:
+            st.markdown("<div style='padding: 5px;'>", unsafe_allow_html=True)
+            try:
+                st.image(row["imagem"], use_container_width=True)
+            except:
+                st.error("Foto não encontrada.")
+
+            # Classes adicionadas (vitrine-nome, vitrine-desc, etc) para o CSS conectar e ajustar os tamanhos
+            st.markdown(f"<h3 class='vitrine-nome' style='font-size: 18px; margin-top: 15px; text-align: center;'>{row['nome']}</h3>", unsafe_allow_html=True)
+            st.markdown(f"<p class='vitrine-desc' style='text-align: center; font-style: italic; font-size: 13px;'>{row['descricao']}</p>", unsafe_allow_html=True)
+            st.markdown(f"<div style='text-align: center;'><span class='vitrine-preco' style='color: #d4af37; font-size: 18px; font-weight: 500;'>{row['preco']}</span><br><span style='color: #888; font-size: 12px;'>Estoque: {row['estoque']} un.</span></div><br>", unsafe_allow_html=True)
+            
+            texto = urllib.parse.quote(f"Olá, J.J Collection! Tenho interesse na peça: {row['nome']} ({row['preco']}). Ainda está disponível?")
+            st.link_button("Comprar 📱", f"https://wa.me/{NUMERO_WHATSAPP}?text={texto}", use_container_width=True)
+            st.markdown("</div><hr style='border-top: 1px solid rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
