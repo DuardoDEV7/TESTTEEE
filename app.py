@@ -38,28 +38,31 @@ h1, h2, h3 { color: #d4af37 !important; font-family: 'Cinzel', serif !important;
 [data-testid="stToolbar"] {right: 2rem; background-color: transparent;}
 
 /* ========================================= */
-/* SETINHA E MENU VISÍVEIS (PC E CELULAR)    */
+/* BOTÃO DO MENU/FILTRO SUPER DESTACADO      */
 /* ========================================= */
 [data-testid="collapsedControl"] {
-    background-color: #1a1a1a !important;
-    border: 1px solid #d4af37 !important;
-    border-radius: 5px !important;
-    margin: 10px !important;
+    background-color: #050505 !important;
+    border: 2px solid #d4af37 !important; /* Borda dourada mais grossa */
+    border-radius: 8px !important; /* Cantos arredondados */
+    margin: 15px !important;
+    padding: 5px !important;
+    box-shadow: 0px 0px 15px rgba(212, 175, 55, 0.4) !important; /* Efeito de brilho dourado */
+    transition: all 0.3s ease !important;
+    z-index: 999999 !important; /* Garante que ele fique sempre na frente */
 }
+
+/* Efeito quando o cliente passa o dedo ou o mouse por cima */
+[data-testid="collapsedControl"]:hover {
+    box-shadow: 0px 0px 25px rgba(212, 175, 55, 0.8) !important; 
+    background-color: #1a1a1a !important;
+}
+
+/* Deixa o ícone (a setinha) maior e dourado */
 [data-testid="collapsedControl"] svg {
     fill: #d4af37 !important;
     color: #d4af37 !important;
-}
-button[kind="header"] {
-    background-color: #1a1a1a !important;
-    border: 1px solid #d4af37 !important;
-    border-radius: 5px !important;
-    margin: 5px !important;
-    padding: 2px !important;
-}
-button[kind="header"] svg {
-    fill: #d4af37 !important;
-    color: #d4af37 !important;
+    width: 35px !important; 
+    height: 35px !important;
 }
 /* ========================================= */
 
