@@ -231,7 +231,7 @@ else:
     st.markdown(header_principal, unsafe_allow_html=True)
     st.markdown(f"<h3 style='text-align: center; margin-bottom: 30px; letter-spacing: 2px;'>{escolha.upper()}</h3>", unsafe_allow_html=True)
 
-    NUMERO_WHATSAPP = "5511999999999"
+    NUMERO_WHATSAPP = "5511976984671"
 
     colunas = st.columns(3)
     for i, (index, row) in enumerate(df_filtrado.iterrows()):
