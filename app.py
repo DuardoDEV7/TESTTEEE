@@ -243,18 +243,22 @@ else:
         df_filtrado = df_estoque
 
     # ==========================================
-    # CSS PARA DIMINUIR AS FOTOS SEM QUEBRAR O SITE
+    # CSS PARA DIMINUIR E CENTRALIZAR AS FOTOS
     # ==========================================
     st.markdown("""
     <style>
-    /* Pega as imagens nativas do Streamlit e diminui o tamanho */
+    /* Garante que a caixa da imagem ocupe o espaço inteiro para poder centralizar */
     [data-testid="stImage"] {
-        display: flex;
-        justify-content: center;
+        width: 100%;
+        display: flex !important;
+        justify-content: center !important;
     }
+    /* Diminui e empurra a foto exatamente para o meio */
     [data-testid="stImage"] img {
-        max-width: 75% !important; /* Aqui você controla o tamanho (tente 70%, 80%...) */
-        border-radius: 8px; /* Deixa as pontas da foto levemente arredondadas */
+        max-width: 75% !important; /* Aqui você controla o tamanho */
+        margin: 0 auto !important; /* Essa é a mágica que centraliza a foto */
+        display: block !important;
+        border-radius: 8px; 
     }
     </style>
     """, unsafe_allow_html=True)
